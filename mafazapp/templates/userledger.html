@@ -1,0 +1,339 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Transaction </title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{% static 'script.js' %}"></script>
+<style>
+    
+.ledger-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+ .modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    width: 50%;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+ .modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+ .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+ .close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    text-decoration: none;
+}
+
+ .close-modal:hover {
+    color: red;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+</style>
+</head>
+<body >
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar" >
+
+        <div class="col-lg-4 col-md-12 col-sm-12 col-12 logo">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo" class="img-fluid ">
+        </div>
+<br><br><br><br>
+<nav class="sidebar-menu">
+    <a href="{% url 'admindashboard' %}" class="nav-link">
+        <i class="fa-solid fa-table-columns"></i> Dashboard
+    </a>
+    <a href="{% url 'adminusers' %}" class="nav-link">
+        <i class='fas fa-user-shield'></i>
+
+        Admin & Users
+    </a>
+    <a href="{% url 'admintransaction' %}" class="nav-link">
+        <i class="fa-solid fa-exchange-alt"></i>
+        Transactions
+    </a>
+    <a href="{% url 'userledger' %}" class="nav-link active">
+        <i class="fa-solid fa-user-group"></i>
+          User Ledger
+    </a>
+    <a href="{% url 'adminprojects' %}" class="nav-link">
+        <i class="fa-solid fa-code-branch"></i>
+             Projects
+    </a>
+<a href="{% url 'logout' %}" class="nav-link logout">
+        <i class="fa-solid fa-door-open"></i>
+             Log Out
+    </a>
+</nav>
+</div>
+
+
+    <!-- Toggle Button -->
+<button class="sidebar-toggle" id="toggleSidebar">☰ </button>
+
+<!-- Main Content -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card p-3">
+                    <h2 class="text-center">Welcome, {{ request.user.first_name }}</h2>
+
+                    <!-- Container to align icons to the right -->
+                    <div class="icons">
+                        <i class="fa-regular fa-bell"></i>
+                        <!-- <i class="fas fa-cog settings-icon"></i> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<br><br><br>
+    
+        <!-- users ledger Section -->
+        <div class="row">
+            <div class="col-12">
+                <h5 class="fw-bold text-uppercase"><i class="fas fa-file-alt"></i> User's Ledger</h5>
+                
+                <form method="GET" class="d-flex justify-content-between">
+                    <span></span>
+                    <select name="filter" class="form-select w-25" onchange="this.form.submit()">
+                        <option value="All" {% if filter_type == "All" %}selected{% endif %}>All</option>
+                        <option value="Admin" {% if filter_type == "Admin" %}selected{% endif %}>Admin</option>
+                        <option value="User" {% if filter_type == "User" %}selected{% endif %}>User</option>
+                    </select>
+                </form>
+                </div>
+             </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>NAME</th>
+                                <th>PROJECT</th>
+                                <th>INVESTMENT</th>
+                                <th>RETURNS</th>
+                                <th>WITHDRAWAL</th>
+                                <th>VIEW LEDGER</th>
+                                <th>ADD/EDIT DOCUMENT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.user.username }}</td>
+                                <td>{{ transaction.project.project_name }}</td>
+                                <td><span class="currency">AED</span> {{ transaction.amount }}</td>
+                                
+                                <td><span class="currency">AED</span> {{ transaction.amount|floatformat:2 }}</td>
+                        
+                                <td>
+                                    <span class="currency">AED</span>
+                                    {% with total_withdrawal=transactions|dictsortreversed:"date"|dictsort:"transaction_type"|first %}
+                                        {% if total_withdrawal.transaction_type == "withdrawal" %}
+                                            {{ total_withdrawal.amount }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                
+                        
+                                 <td>
+                                    <!-- Trigger Modal for User Transactions -->
+                                    <a href="{% url 'userledger' transaction.user.id %}">
+                                        VIEW RECEIPT
+                                    </a>
+                                </td>
+                        
+                                <td>
+                                    <a href="{% url 'admin_user_documents' transaction.user.id %}" class="badge2 userledgerbtn">USER DOCS</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No transactions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+        
+    
+        <div class="row mt-4">
+            <div class="col-6">
+                <p>{{ transactions.paginator.count }} results</p>
+            </div>
+            <div class=" col-lg-6 col-md-6 col-sm-6 col-6">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+                        {% if transactions.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ transactions.previous_page_number }}">&lt;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">&lt;</a>
+                            </li>
+                        {% endif %}
+        
+                        {% for num in transactions.paginator.page_range %}
+                            <li class="page-item {% if transactions.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+        
+                        {% if transactions.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ transactions.next_page_number }}">&gt;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">&gt;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        
+            </div>
+
+
+            {% if ledger_data %}
+            <div class="ledger-modal userledger1">
+                <div class="modal-overlay" onclick="closeModal()"></div> <!-- Click outside to close -->
+                <div class="modal-content">
+                    <a href="{% url 'userledger' %}" class="close-modal" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                    </a>
+            
+                    {% if selected_user %}
+                    <h3 class="modal-title">{{ selected_user.username }}'s Ledger</h3>
+                    {% else %}
+                    <h3 class="modal-title">Ledger Details</h3>
+                    {% endif %}
+            
+                    <!-- Export Buttons -->
+                    <div class="modal-buttons">
+                        <button class="btn btn-primary" onclick="exportLedgerPDF()">
+                            <i class="fas fa-download"></i> Export PDF
+                        </button>
+                        <button class="btn btn-success" onclick="exportLedgerExcel()">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                    </div>
+            
+                    <div id="ledger-table-content">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Narration</th>
+                                    <th>Debit (AED)</th>
+                                    <th>Credit (AED)</th>
+                                    <th>Balance (AED)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in ledger_data %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.narration }}</td>
+                                    <td>{% if transaction.transaction_type == 'withdrawal' %} {{ transaction.amount }} {% else %} - {% endif %}</td>
+                                    <td>{% if transaction.transaction_type == 'investment' %} {{ transaction.amount }} {% else %} - {% endif %}</td>
+                                    <td>{{ transaction.running_balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            
+
+<script>
+    function closeModal() {
+    document.querySelector(".ledger-modal").style.display = "none";
+}
+
+</script>
+
+
+
+
+
+
+            <script>
+                // JavaScript for Sidebar Toggle
+        document.getElementById("toggleSidebar").addEventListener("click", function() {
+            var sidebar = document.getElementById("sidebar");
+            var toggleButton = document.getElementById("toggleSidebar");
+        
+            if (sidebar.style.display === "none" || sidebar.style.display === "") {
+                sidebar.style.display = "block";  // Show Sidebar
+                toggleButton.innerHTML = "✖";   // Change to Close Button
+            } else {
+                sidebar.style.display = "none";  // Hide Sidebar
+                toggleButton.innerHTML = "☰";   // Change to Menu Button
+            }
+        });
+
+  </script>
+            
+</body>
+</html>

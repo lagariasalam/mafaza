@@ -1,0 +1,308 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Transaction </title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{% static 'script.js' %}"></script>
+
+</head>
+<body >
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar" >
+
+        <div class="col-lg-4 col-md-12 col-sm-12 col-12 logo">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo" class="img-fluid ">
+        </div>
+<br><br><br><br>
+<nav class="sidebar-menu">
+    <a href="{% url 'admindashboard' %}" class="nav-link">
+        <i class="fa-solid fa-table-columns"></i> Dashboard
+    </a>
+    <a href="{% url 'adminusers' %}" class="nav-link">
+        <i class='fas fa-user-shield'></i>
+
+        Admin & Users
+    </a>
+    <a href="{% url 'admintransaction' %}" class="nav-link active">
+        <i class="fa-solid fa-exchange-alt"></i>
+        Transactions
+    </a>
+    <a href="{% url 'userledger' %}" class="nav-link">
+        <i class="fa-solid fa-user-group"></i>
+          User Ledger
+    </a>
+    <a href="{% url 'adminprojects' %}" class="nav-link">
+        <i class="fa-solid fa-code-branch"></i>
+             Projects
+    </a>
+<a href="{% url 'logout' %}" class="nav-link logout">
+        <i class="fa-solid fa-door-open"></i>
+             Log Out
+    </a>
+
+</nav>
+</div>
+
+
+    <!-- Toggle Button -->
+<button class="sidebar-toggle" id="toggleSidebar">☰ </button>
+
+<!-- Main Content -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card p-3">
+                    <h2 class="text-center">Welcome, {{ request.user.first_name }}</h2>
+
+        
+                    <!-- Container to align icons to the right -->
+                    <div class="icons">
+                        <i class="fa-regular fa-bell"></i>
+                        <!-- <i class="fas fa-cog settings-icon"></i> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request New Transaction Section -->
+    <div class="container-fluid requestcontainer">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="fw-bold text-uppercase"><i class="fas fa-file-alt"></i>  Add Transactions</h5>
+
+                  
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label>Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        <input type="text" class="form-control" value="{{ today_date }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label>User</label>
+                                    <select name="selected_user" class="form-control" onchange="this.form.submit()">
+                                        <option value="">Select User</option>
+                                        {% for user in users %}
+                                            <option value="{{ user.id }}" {% if selected_user_id == user.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ user.username }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label>Amount</label>
+                                    <input type="text" name="amount" class="form-control" placeholder="Input text" value="{{ form.amount.value|default:'' }}">
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label>Project</label>
+                                    <select name="project" class="form-control">
+                                        {% for project in projects %}
+                                            <option value="{{ project.id }}">{{ project.project_name }}</option>
+                                        {% empty %}
+                                            <option disabled>No assigned projects available</option>
+                                        {% endfor %}
+                                    </select>
+                                    
+                                    
+                                </div>
+                            </div>
+                        
+                            <br>
+                        
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <label>Transaction Type</label>
+                                    <select name="transaction_type" class="form-control">
+                                        {% for type, label in form.transaction_type.field.choices %}
+                                            <option value="{{ type }}" {% if form.transaction_type.value == type %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <label>Narration</label>
+                                    <input type="text" name="narration" class="form-control" placeholder="Input text" value="{{ form.narration.value|default:'' }}">
+                                </div>
+                            </div>
+                        
+                            <br>
+                        
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <label>Upload Receipt</label>
+                                    <div class="upload-box" onclick="document.getElementById('receiptUpload').click()">
+                                        <p >Drop files here</p>
+                                        <small>Supported format: PNG, JPG</small>
+                                        <input type="file" name="receipt" id="receiptUpload" class="d-none" accept="image/png, image/jpeg">
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <br>
+                        
+                            <div class="text-end transactionbtn">
+                                <button type="submit" class="btn csv-btn px-4">SUBMIT</button>
+                            </div>
+                        </form>        
+                          <br>
+            
+
+        <!-- Recent Transactions Section -->
+        <div class="row">
+            <div class="col-12">
+                <h5 class="fw-bold text-uppercase"><i class="fas fa-file-alt"></i> Pending Transactions</h5>
+               
+                <form method="GET" id="filterForm" class="d-flex justify-content-between">
+                    <span></span>
+                    <select class="form-select w-25" name="user_type" onchange="this.form.submit()">
+                        <option value="All" {% if user_type == "All" %}selected{% endif %}>All</option>
+                        <option value="Admin" {% if user_type == "Admin" %}selected{% endif %}>Admin</option>
+                        <option value="User" {% if user_type == "User" %}selected{% endif %}>User</option>
+                    </select>
+                </form></div>
+
+
+
+
+
+
+
+                <div class="table-responsive mt-3">
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>NAME</th>
+                                <th>PROJECT</th>
+                                <th>INVESTMENT</th>
+                                <th>WITHDRAWAL</th>
+                                <th>USER RECEIPT</th>
+                                <th>ADMIN RECEIPT</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.user.first_name }} {{ transaction.user.last_name }}</td>
+                                <td>{{ transaction.project.project_name }}</td>
+                                <td><span class="currency">AED</span> {{ transaction.amount }}</td>
+                                <td>
+                                    {% if transaction.transaction_type == "withdrawal" %}
+                                        <span class="currency">AED</span> {{ transaction.amount }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.receipt %}
+                                        <a href="{{ transaction.receipt.url }}" class="text-primary" target="_blank">VIEW RECEIPT</a>
+                                    {% else %}
+                                        No Receipt
+                                    {% endif %}
+                                </td>
+                                <td><a href="#" class="text-primary">UPLOAD RECEIPT</a></td>
+                                <td>
+                                    <form method="POST" action="{% url 'approve_transaction' transaction.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="badge3">Approve</button>
+                                    </form><br>
+                                    <form method="POST" action="{% url 'reject_transaction' transaction.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="badge1 btn-sm">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No pending transactions</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <p>{{ transactions.paginator.count }} results</p>
+                    </div>
+                    <div class="col-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end">
+                                {% if transactions.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ transactions.previous_page_number }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                
+                                {% for num in transactions.paginator.page_range %}
+                                    {% if transactions.number == num %}
+                                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                    {% elif num > transactions.number|add:'-2' and num < transactions.number|add:'2' %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if transactions.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ transactions.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </div>
+            <script>
+                // JavaScript for Sidebar Toggle
+        document.getElementById("toggleSidebar").addEventListener("click", function() {
+            var sidebar = document.getElementById("sidebar");
+            var toggleButton = document.getElementById("toggleSidebar");
+        
+            if (sidebar.style.display === "none" || sidebar.style.display === "") {
+                sidebar.style.display = "block";  // Show Sidebar
+                toggleButton.innerHTML = "✖";   // Change to Close Button
+            } else {
+                sidebar.style.display = "none";  // Hide Sidebar
+                toggleButton.innerHTML = "☰";   // Change to Menu Button
+            }
+        });
+         
+         
+</script>
+
+    
+</body>
+</html>

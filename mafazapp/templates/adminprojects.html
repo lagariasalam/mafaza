@@ -1,0 +1,348 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>admin projects</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{% static 'script.js' %}"></script>
+
+</head>
+<body >
+
+    <div class="sidebar" id="sidebar" >
+
+        <div class="col-lg-4 col-md-12 col-sm-12 col-12 logo">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo" class="img-fluid ">
+        </div>
+<br><br><br><br>
+<nav class="sidebar-menu">
+    <a href="{% url 'admindashboard' %}" class="nav-link">
+        <i class="fa-solid fa-table-columns"></i> Dashboard
+    </a>
+    <a href="{% url 'adminusers' %}" class="nav-link">
+        <i class='fas fa-user-shield'></i>
+
+        Admin & Users
+    </a>
+    <a href="{% url 'admintransaction' %}" class="nav-link">
+        <i class="fa-solid fa-exchange-alt"></i>
+        Transactions
+    </a>
+    <a href="{% url 'userledger' %}" class="nav-link">
+        <i class="fa-solid fa-user-group"></i>
+          User Ledger
+    </a>
+    <a href="{% url 'adminprojects' %}" class="nav-link active">
+        <i class="fa-solid fa-code-branch"></i>
+             Projects
+    </a>
+<a href="{% url 'logout' %}" class="nav-link logout">
+        <i class="fa-solid fa-door-open"></i>
+             Log Out
+    </a>
+</nav>
+ </div>
+
+
+    <!-- Toggle Button -->
+<button class="sidebar-toggle" id="toggleSidebar">☰ </button>
+
+<div class="content">
+    <div class="container-fluid" >
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12"> 
+                <div class="card p-3">
+                    <h2 class="text-center">Welcome, {{ request.user.first_name }}</h2>
+        
+                    <!-- Container to align icons to the right -->
+                    <div class="icons">
+                        <i class="fa-regular fa-bell"></i>
+                        <!-- <i class="fas fa-cog settings-icon"></i> -->
+                    </div>
+        
+                </div> 
+            </div>
+        </div>
+        
+        <br><br><br>
+
+
+
+<!-- Request New Transaction Section -->
+<div class="container-fluid requestcontainer">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <h5 class="fw-bold text-uppercase"><i class="fas fa-file-alt"></i> Add Projects</h5>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Project Name</label>
+                            <input type="text" name="project_name" class="form-control bg-light" placeholder="Enter project name" required>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Total Investment</label>
+                            <input type="number" name="total_investment" class="form-control bg-light" placeholder="Enter amount" required>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Min ROI (%)</label>
+                            <input type="number" name="min_roi" class="form-control bg-light" placeholder="Enter min ROI" step="0.01" required>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Max ROI (%)</label>
+                            <input type="number" name="max_roi" class="form-control bg-light" placeholder="Enter max ROI" step="0.01" required>
+                        </div>
+                    </div>
+            
+                    <br>
+            
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <label>Project Description</label>
+                            <textarea name="project_description" class="form-control bg-light" placeholder="Enter description" rows="3" required></textarea>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <label>Upload Images</label>
+                            <div class="p-3 text-center adminprojectfile bg-light">
+                                <p class="mb-1">Drop 3 files at once here</p>
+                                <small class="text-muted">Supported format: PNG, JPG</small>
+                                <input type="file" name="images[]" class="form-control bg-light" accept="image/png, image/jpeg" multiple>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                                                  
+                        </div>
+                    </div>
+       
+                    <br>
+                    <div class="text-end">
+                        <button type="submit" class="btn csv-btn px-4">SUBMIT</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
+
+
+<!-- Current Projects Section -->
+<div class="row">
+    <!-- Current Projects Section 1 -->
+    {% for project in projects %}
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="card p-3">
+            <div class="row align-items-center">
+                <!-- Left Side - Project Details -->
+                <div class="col-lg-6 col-md-6 col-12">
+                    <h6 class="fw-bold">{{ project.project_name }}</h6>
+                    <h3 class="fw-bold">{{ project.total_investment }}</h3>
+                    <textarea class="form-control text-muted" rows="3" readonly>
+                        {{ project.project_description }}
+                    </textarea>
+                </div>
+
+                <!-- Right Side - Project Image -->
+
+                 <div class="col-lg-6 col-md-6 col-12 d-flex justify-content-center mt-3 mt-md-0">
+                    <div class="image-stack">
+
+                        {% if project.image1 %}
+                            <img src="{{ project.image1.url }}" class="image image-left">
+                        {% endif %}
+                        {% if project.image2 %}
+                            <img src="{{ project.image2.url }}" class="image image-center">
+                        {% endif %}
+                        {% if project.image3 %}
+                            <img src="{{ project.image3.url }}" class="image image-right">
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                <!-- Buttons and Active Switch -->
+                <div class="col-12 mt-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
+                    <button class="btn btn-warning btn-sm w-10 w-md-auto mb-2 mb-md-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editProjectModal"
+                    data-project-id="{{ project.id }}"
+                    data-project-name="{{ project.project_name }}"
+                    data-total-investment="{{ project.total_investment }}"
+                    data-min-roi="{{ project.min_roi }}"
+                    data-max-roi="{{ project.max_roi }}"
+                    data-project-description="{{ project.project_description }}">
+                <i class="fas fa-edit"></i> EDIT
+            </button>
+            
+                    <div class="form-check form-switch">
+                        <input class="form-check-input toggle-status" type="checkbox" data-project-id="{{ project.id }}" {% if project.is_active %}checked{% endif %}>
+                        <span class="fw-bold ms-2">{% if project.is_active %}ACTIVE{% else %}INACTIVE{% endif %}</span>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <p class="text-center text-muted">No projects available.</p>
+{% endfor %}
+
+<div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProjectModalLabel">Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form inside modal -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="project_id" id="modal_project_id" value="{{ project.id }}">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Project Name</label>
+                            <input type="text" name="project_name" id="modal_project_name" class="form-control bg-light" value="{{ project.project_name }}" required>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Total Investment</label>
+                            <input type="number" name="total_investment" id="modal_total_investment" class="form-control bg-light" required>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Min ROI (%)</label>
+                            <input type="number" name="min_roi" id="modal_min_roi" class="form-control bg-light" step="0.01" required>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label>Max ROI (%)</label>
+                            <input type="number" name="max_roi" id="modal_max_roi" class="form-control bg-light" value="{{ project.max_roi }}" step="0.01" required>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <label>Project Description</label>
+                            <textarea name="project_description" id="modal_project_description" class="form-control bg-light" rows="3" required></textarea>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <label>Upload Images</label>
+                            <div class="p-3 text-center adminprojectfile bg-light">
+                                <p class="mb-1">Drop files here</p>
+                                <small class="text-muted">Supported format: PNG, JPG</small>
+                                <input type="file" id="modalProjectImageUpload" name="images[]" class="form-control bg-light" accept="image/png, image/jpeg" multiple>
+                                <div id="existing_images" class="d-flex gap-2 mt-2"></div>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div class="text-end">
+                        <button type="submit" class="btn csv-btn px-4">SUBMIT</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+
+<script>
+// JavaScript to populate modal with current project data
+document.querySelectorAll('.btn-warning').forEach(button => {
+    button.addEventListener('click', function() {
+        const projectId = this.getAttribute('data-project-id');
+        fetch(`/projects/${projectId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('modal_project_id').value = data.id;
+                document.getElementById('modal_project_name').value = data.project_name;
+                document.getElementById('modal_total_investment').value = data.total_investment;
+                document.getElementById('modal_min_roi').value = data.min_roi;
+                document.getElementById('modal_max_roi').value = data.max_roi;
+                document.getElementById('modal_project_description').value = data.project_description;
+            });
+    });
+});
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".toggle-status").forEach((toggle) => {
+            toggle.addEventListener("change", function () {
+                let projectId = this.getAttribute("data-project-id");
+                fetch(`/toggle_project_status/${projectId}/`, {
+                    method: "GET",
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        let label = this.nextElementSibling;
+                        label.textContent = data.is_active ? "ACTIVE" : "INACTIVE";
+                    }
+                });
+            });
+        });
+    });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editModal = document.getElementById("editProjectModal");
+    
+            editModal.addEventListener("show.bs.modal", function(event) {
+                let button = event.relatedTarget;
+    
+                // Extract info from data-* attributes
+                let projectId = button.getAttribute("data-project-id");
+                let projectName = button.getAttribute("data-project-name");
+                let totalInvestment = button.getAttribute("data-total-investment");
+                let minRoi = button.getAttribute("data-min-roi");
+                let maxRoi = button.getAttribute("data-max-roi");
+                let projectDescription = button.getAttribute("data-project-description");
+    
+                // Populate form fields
+                document.getElementById("modal_project_id").value = projectId;
+                document.getElementById("modal_project_name").value = projectName;
+                document.getElementById("modal_total_investment").value = totalInvestment;
+                document.getElementById("modal_min_roi").value = minRoi;
+                document.getElementById("modal_max_roi").value = maxRoi;
+                document.getElementById("modal_project_description").value = projectDescription;
+    
+                // Load existing images
+                let existingImagesContainer = document.getElementById("existing_images");
+                existingImagesContainer.innerHTML = "";  // Clear previous images
+    
+                let imageUrls = [
+                    button.getAttribute("data-image1"),
+                    button.getAttribute("data-image2"),
+                    button.getAttribute("data-image3")
+                ];
+    
+                imageUrls.forEach(url => {
+                    if (url) {
+                        let imgElement = document.createElement("img");
+                        imgElement.src = url;
+                        imgElement.className = "existing-image-preview";  // Add styling if needed
+                        existingImagesContainer.appendChild(imgElement);
+                    }
+                });
+            });
+        });
+    </script>
+    
+        
+<!-- Add FontAwesome for icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="{% static 'script.js' %}"></script>
+</body>
+</html>
