@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,12 +91,27 @@ WSGI_APPLICATION = 'mafazaproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',  # or another engine (e.g., PostgreSQL)
+#         'NAME': BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # or another engine (e.g., PostgreSQL)
-        'NAME': BASE_DIR / "db.sqlite3",
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',  # or another engine (e.g., PostgreSQL)
+        'NAME': 'railway',
+        'USER' : 'postgres',
+        'PASSWORD': 'OGsfquDDgpcRXgdfTGWOREkHQREsCJfj',
+        'HOST': 'caboose.proxy.rlwy.net',
+        'PORT': '21376',
     }
 }
+
+DATABASE_URL = os.getenv('postgresql://postgres:OGsfquDDgpcRXgdfTGWOREkHQREsCJfj@caboose.proxy.rlwy.net:21376/railway')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
 
 
 
