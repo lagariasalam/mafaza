@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mafazapp',
-     'django_countries',
+    'django_countries',
 
 ]
 
@@ -126,6 +126,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR /"mafazapp"/ "static"]
 
 STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+CSRF_TRUSTED_ORIGINS= [""]
 
 
 

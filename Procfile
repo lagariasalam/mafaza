@@ -1,3 +1,3 @@
-web: gunicorn mafaza.wsgi --log-file - 
+web: gunicorn mafazaproject.wsgi --log-file - 
 #or works good with external database
-web: python manage.py migrate && gunicorn mafaza.wsgi
+web: python manage.py migrate && gunicorn mafazaproject.wsgi
