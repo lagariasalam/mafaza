@@ -1,2 +1,1 @@
-web: python manage.py migrate && web: gunicorn mafazaproject.wsgi
-
+web: gunicorn mafazaproject.wsgi --log-file - 
