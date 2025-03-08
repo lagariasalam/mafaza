@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-a#_j#6h2l-a^57s((zi_*g-m!y8ywv5a7jn=9i94p+t&#m1&)y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,6 +43,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -121,6 +124,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR /"mafazapp"/ "static"]
+
+STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 
 MEDIA_URL = '/media/'
