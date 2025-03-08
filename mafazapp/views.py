@@ -16,13 +16,22 @@ from .forms import SignupForm,InvestmentProjectForm,UserTransactionForm,UserProf
 from .models import InvestmentProject,PasswordResetRequest,CustomUser,UserDocument,UserProjectAssignment,Transaction
 from django.utils.timezone import now
 
-def home(request):
-    projects = InvestmentProject.objects.all()
 
-    context = {
-        "projects": projects, 
-    }
-    return render(request, "home.html", context)
+from django.shortcuts import render
+from .models import InvestmentProject
+
+def home(request):
+    projects = InvestmentProject.objects.all()  # Fetch all projects
+    return render(request, "home.html", {"projects": projects})  # Pass to template
+
+
+# def home(request):
+#     projects = InvestmentProject.objects.all()
+
+#     context = {
+#         "projects": projects, 
+#     }
+#     return render(request, "home.html", context)
 
 
 def signup(request):

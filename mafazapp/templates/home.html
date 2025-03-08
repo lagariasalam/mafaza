@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
+
 <body class="bodyhome">
     <div class="container">
         <div class="row align-items-center row1 ">
@@ -33,38 +35,39 @@
             <div class="text1">Igniting Your Passion for Movies, Unleashing Wonder!</div>
         </div>
         <div class="row">
-            <div class="sub-text">Welcome to PLAYCINE, where the silver screen comes alive, offering a captivating web app experience that fuels your love for movies.</div>
+            <div class="sub-text">Welcome to PLAYCINE, where the silver screen comes alive, offering a captivating web
+                app experience that fuels your love for movies.</div>
         </div>
         <div class="row justify-content-center">
-            {% if projects %}
+            {% if projects|length > 0 %}
             <section class="carousel-section">
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         {% for project in projects %}
-                            <div class="swiper-slide">
-                                <img src="{{ project.image1.url }}" alt="{{ project.project_name }}" class="project-image">
-                                <h3 class="project-title">{{ project.project_name }}</h3>
-                                <p class="project-description">{{ project.project_description }}</p>
-                            </div>
+                        <div class="swiper-slide">
+                            <img src="{{ project.image1.url }}" alt="{{ project.project_name }}" class="project-image">
+                            <h3 class="project-title">{{ project.project_name }}</h3>
+                            <p class="project-description">{{ project.project_description }}</p>
+                        </div>
                         {% endfor %}
-        
+
                         <!-- Duplicate slides for smooth loop -->
                         {% for project in projects %}
-                            <div class="swiper-slide">
-                                <img src="{{ project.image1.url }}" alt="{{ project.project_name }}" class="project-image">
-                                <h3 class="project-title">{{ project.project_name }}</h3>
-                                <p class="project-description">{{ project.project_description }}</p>
-                            </div>
+                        <div class="swiper-slide">
+                            <img src="{{ project.image1.url }}" alt="{{ project.project_name }}" class="project-image">
+                            <h3 class="project-title">{{ project.project_name }}</h3>
+                            <p class="project-description">{{ project.project_description }}</p>
+                        </div>
                         {% endfor %}
                     </div>
-        
+
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
                     <div class="swiper-pagination"></div>
                 </div>
             </section>
-        {% endif %}
-        
+            {% endif %}
+
 
         </div>
     </div>
@@ -74,4 +77,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.0.0/swiper-bundle.min.js"></script>
     <script src="{% static 'script.js' %}"></script>
 </body>
+
 </html>
