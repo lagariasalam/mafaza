@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,10 +46,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-
 
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this line
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -122,12 +124,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR /"mafazapp"/ "static"]
 
-STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# For collecting static files during deployment
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CSRF_TRUSTED_ORIGINS= [""]
+# Ensure the path is correct for development static files
+STATICFILES_DIRS = [
+    BASE_DIR / "mafazapp" / "static",
+]
+
+# Optional: Middleware to serve static files in development
+if not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 
 
 
