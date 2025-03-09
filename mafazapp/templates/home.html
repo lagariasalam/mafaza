@@ -1,3 +1,65 @@
+<style>
+    /* Additional styles to fix alignment issues */
+    .swiper-initialized {
+        overflow: hidden;
+    }
+
+    .swiper-backface-hidden .swiper-slide {
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+    }
+
+    .swiper-horizontal {
+        touch-action: pan-y;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        cursor: pointer;
+    }
+
+    .swiper-button-next {
+        right: 10px;
+    }
+
+    .swiper-button-prev {
+        left: 10px;
+    }
+
+    .swiper-pagination {
+        text-align: center;
+        transition: opacity .3s;
+        transform: translate3d(0, 0, 0);
+        z-index: 10;
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+    }
+
+    .swiper-pagination-clickable .swiper-pagination-bullet {
+        cursor: pointer;
+    }
+
+    .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        display: inline-block;
+        border-radius: 50%;
+        background: #000;
+        opacity: .2;
+        margin: 0 4px;
+    }
+
+    .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: #d4af37;
+    }
+</style>
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +83,8 @@
 
         .header-container {
             padding: 20px 0;
+            margin-bottom: 30px;
+            margin-top: 50px;
         }
 
         .logo-container {
@@ -40,7 +104,7 @@
         }
 
         .auth-button {
-            background-color: #CD992B;
+            background-color: #d4af37;
             color: white;
             border: none;
             padding: 8px 20px;
@@ -50,7 +114,7 @@
         }
 
         .auth-button:hover {
-            background-color: #CD992B;
+            background-color: #45a049;
             transform: translateY(-2px);
         }
 
@@ -64,6 +128,7 @@
             font-weight: bold;
             text-align: center;
             margin: 30px 0 15px;
+            color: white;
         }
 
         .sub-text {
@@ -75,14 +140,21 @@
             margin-right: auto;
         }
 
+        .sub-heading {
+            margin-top: 50px;
+            color: white;
+        }
+
         /* Card carousel styles */
         .card-carousel-container {
-            padding: 40px 0;
+            padding: 10px 0;
             background-color: transparent;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .card-swiper {
-            padding: 20px 0 50px;
+            padding: 20px 0 10px;
         }
 
         .card-slide {
@@ -148,7 +220,7 @@
         .card-btn {
             display: inline-block;
             padding: 8px 20px;
-            background-color: #CD992B;
+            background-color: #d4af37;
             color: white;
             border-radius: 5px;
             text-decoration: none;
@@ -168,22 +240,35 @@
 
         .swiper-button-next,
         .swiper-button-prev {
-            color: #CD992B;
+            color: #d4af37;
         }
 
         /* Media queries for better responsiveness */
         @media (max-width: 768px) {
             .button-container {
                 justify-content: center;
+                margin-top: 20px;
+            }
+
+            .logo-container {
+                text-align: center;
+                display: flex;
+                justify-content: center;
+            }
+
+            .logo1 {
+                max-height: 80px;
             }
 
             .text1 {
                 font-size: 2rem;
+                margin-top: 40px;
             }
 
             .sub-text {
                 font-size: 1rem;
                 padding: 0 15px;
+                margin-bottom: 50px;
             }
 
             .project-card {
@@ -197,6 +282,14 @@
             .card-project-description {
                 font-size: 0.9rem;
             }
+
+            .clear-spacing {
+                height: 20px;
+            }
+
+            .card-carousel-container {
+                margin-top: 20px;
+            }
         }
 
         @media (max-width: 576px) {
@@ -207,6 +300,7 @@
 
             .text1 {
                 font-size: 1.8rem;
+                padding-top: 50px;
             }
 
             .project-card {
@@ -230,13 +324,13 @@
 </head>
 
 <body class="bodyhome">
-    <div class="container mb-4">
+    <div class="container">
         <!-- Header with logo and buttons -->
         <div class="row header-container">
-            <div class="col-lg-6 col-md-12 logo-container">
+            <div class="col-lg-6 col-md-12 col-sm-12 logo-container">
                 <img src="{% static 'images/logo.svg' %}" alt="Logo" class="img-fluid logo1">
             </div>
-            <div class="col-lg-6 col-md-12 button-container">
+            <div class="col-lg-6 col-md-12 col-sm-12 button-container">
                 <button class="auth-button">
                     <a href="{% url 'signup' %}" class="nav-link">SIGNUP</a>
                 </button>
@@ -250,18 +344,25 @@
         <div class="row">
             <div class="col-12 text1">Mafaza Investment</div>
         </div>
-        <div class="row mb-5">
-            <div class="col-12 sub-text">A Trusted Investment & Management Partner. Empowering businesses with confident
+        <div class="row">
+            <div class="col-12 sub-heading">A Trusted Investment & Management Partner. Empowering businesses with
+                confident
                 investment solutions.</div>
         </div>
     </div>
 
-    <!-- Card-based Carousel section (outside the previous container for spacing) -->
+    <!-- Spacing div -->
+    <div class="clear-spacing"></div>
+
+    <!-- Card-based Carousel section -->
     {% if projects|length > 0 %}
+    <div class="clear-spacing" id="clear-spacing"></div>
+
     <div class="card-carousel-container">
         <div class="container">
-            <div class="swiper card-swiper">
-                <div class="swiper-wrapper">
+            <div class="swiper card-swiper swiper-initialized swiper-horizontal swiper-backface-hidden">
+                <div class="swiper-wrapper" id="swiper-wrapper-efb58a1badc7fe52" aria-live="off"
+                    style="transition-duration: 0ms; transform: translate3d(-351.667px, 0px, 0px);">
                     {% for project in projects %}
                     <div class="swiper-slide card-slide">
                         <div class="project-card">
@@ -293,18 +394,16 @@
                     </div>
                     {% endfor %}
                 </div>
-                <div class="swiper-pagination card-pagination"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination card-pagination swiper-pagination-clickable swiper-pagination-bullets">
+                </div>
+                <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide"
+                    aria-controls="swiper-wrapper-efb58a1badc7fe52"></div>
+                <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide"
+                    aria-controls="swiper-wrapper-efb58a1badc7fe52"></div>
             </div>
         </div>
     </div>
-
-    <div class="container">
-        <div class="row justify-content-center">
-            <!-- Empty row to continue content after carousel if needed -->
-        </div>
-        {% endif %}
+    {% endif %}
     </div>
 
     <!-- JavaScript (Place at the bottom for better performance) -->
@@ -334,19 +433,20 @@
             // Responsive breakpoints with auto sizing for perfect fit
             breakpoints: {
                 320: {
-                    slidesPerView: 1.2,
+                    slidesPerView: 1,
                     spaceBetween: 10,
                 },
                 576: {
-                    slidesPerView: 1.8,
+                    slidesPerView: 1,
                     spaceBetween: 15,
+                    centeredSlides: true,
                 },
                 768: {
-                    slidesPerView: 2.2,
+                    slidesPerView: 2,
                     spaceBetween: 20,
                 },
                 992: {
-                    slidesPerView: 3.2,
+                    slidesPerView: 3,
                     spaceBetween: 25,
                 }
             }
@@ -360,13 +460,6 @@
             swiper.on('touchEnd', function () {
                 swiper.autoplay.start();
             });
-
-            // Force perfect looping without gaps
-            swiper.on('beforeLoopFix', function () {
-                // Remove any potential empty spaces in the loop
-                swiper.updateSize();
-                swiper.updateSlides();
-            });
         });
 
         // Make sure autoplay continues even after page interactions
@@ -379,14 +472,7 @@
                 if (!swiper.autoplay.running) {
                     swiper.autoplay.start();
                 }
-                swiper.updateSize(); // Periodically update size to maintain perfect loop
             }, 5000);
-        });
-
-        // Handle window resize to prevent gaps
-        window.addEventListener('resize', function () {
-            swiper.updateSize();
-            swiper.updateSlides();
         });
     </script>
 </body>

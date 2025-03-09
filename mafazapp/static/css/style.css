@@ -97,6 +97,7 @@ body {
 
 .swiper-wrapper {
     align-items: center;
+    height: 70%;
 }
 
 .swiper-slide-active {
