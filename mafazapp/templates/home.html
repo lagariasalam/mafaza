@@ -50,7 +50,7 @@
         }
 
         .auth-button:hover {
-            background-color: #45a049;
+            background-color: #CD992B;
             transform: translateY(-2px);
         }
 
@@ -75,78 +75,100 @@
             margin-right: auto;
         }
 
-        /* Modern carousel styles */
-        .modern-carousel-container {
+        /* Card carousel styles */
+        .card-carousel-container {
+            padding: 40px 0;
+            background-color: transparent;
+        }
+
+        .card-swiper {
+            padding: 20px 0 50px;
+        }
+
+        .card-slide {
+            height: auto;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            width: auto;
+            /* Allow slides to adjust their width automatically */
+        }
+
+        .project-card {
             width: 100%;
+            max-width: 350px;
+            min-width: 250px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 50px;
-            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .modern-swiper {
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-image-container {
             width: 100%;
-        }
-
-        .modern-slide {
-            height: 500px;
+            height: 200px;
             overflow: hidden;
-            position: relative;
         }
 
-        .slide-content {
-            height: 100%;
-            position: relative;
-        }
-
-        .modern-project-image {
+        .card-project-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
 
-        .slide-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-            color: white;
-            padding: 30px 20px;
-            transform: translateY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .modern-project-title {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .modern-project-description {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .modern-slide:hover .modern-project-image {
+        .project-card:hover .card-project-image {
             transform: scale(1.05);
         }
 
-        .modern-pagination {
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-project-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card-project-description {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .card-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #CD992B;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background-color: #3e9142;
+        }
+
+        .card-pagination {
             position: absolute;
-            bottom: 20px;
+            bottom: 10px;
             z-index: 10;
         }
 
-        .swiper-pagination-bullet {
-            width: 12px;
-            height: 12px;
-            opacity: 0.7;
-        }
-
-        .swiper-pagination-bullet-active {
-            background-color: #4CAF50;
-            opacity: 1;
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: #CD992B;
         }
 
         /* Media queries for better responsiveness */
@@ -164,15 +186,15 @@
                 padding: 0 15px;
             }
 
-            .modern-slide {
-                height: 400px;
+            .project-card {
+                max-width: 320px;
             }
 
-            .modern-project-title {
-                font-size: 1.5rem;
+            .card-project-title {
+                font-size: 1.2rem;
             }
 
-            .modern-project-description {
+            .card-project-description {
                 font-size: 0.9rem;
             }
         }
@@ -187,12 +209,21 @@
                 font-size: 1.8rem;
             }
 
-            .modern-slide {
-                height: 300px;
+            .project-card {
+                max-width: 280px;
             }
 
-            .slide-overlay {
+            .card-image-container {
+                height: 180px;
+            }
+
+            .card-content {
                 padding: 15px;
+            }
+
+            .card-btn {
+                padding: 6px 15px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -225,37 +256,47 @@
         </div>
     </div>
 
-    <!-- Modern Carousel section (outside the previous container for full-width effect) -->
+    <!-- Card-based Carousel section (outside the previous container for spacing) -->
     {% if projects|length > 0 %}
-    <div class="modern-carousel-container">
-        <div class="swiper modern-swiper">
-            <div class="swiper-wrapper">
-                {% for project in projects %}
-                <div class="swiper-slide modern-slide">
-                    <div class="slide-content">
-                        <img src="{{ project.image1.url }}" alt="{{ project.project_name }}"
-                            class="modern-project-image">
-                        <div class="slide-overlay">
-                            <h3 class="modern-project-title">{{ project.project_name }}</h3>
-                            <p class="modern-project-description">{{ project.project_description }}</p>
+    <div class="card-carousel-container">
+        <div class="container">
+            <div class="swiper card-swiper">
+                <div class="swiper-wrapper">
+                    {% for project in projects %}
+                    <div class="swiper-slide card-slide">
+                        <div class="project-card">
+                            <div class="card-image-container">
+                                <img src="{{ project.image1.url }}" alt="{{ project.project_name }}"
+                                    class="card-project-image">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-project-title">{{ project.project_name }}</h3>
+                                <p class="card-project-description">{{ project.project_description }}</p>
+                                <!-- <a href="#" class="card-btn">Learn More</a> -->
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-                {% for project in projects %}
-                <div class="swiper-slide modern-slide">
-                    <div class="slide-content">
-                        <img src="{{ project.image1.url }}" alt="{{ project.project_name }}"
-                            class="modern-project-image">
-                        <div class="slide-overlay">
-                            <h3 class="modern-project-title">{{ project.project_name }}</h3>
-                            <p class="modern-project-description">{{ project.project_description }}</p>
+                    {% endfor %}
+                    {% for project in projects %}
+                    <div class="swiper-slide card-slide">
+                        <div class="project-card">
+                            <div class="card-image-container">
+                                <img src="{{ project.image1.url }}" alt="{{ project.project_name }}"
+                                    class="card-project-image">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-project-title">{{ project.project_name }}</h3>
+                                <p class="card-project-description">{{ project.project_description }}</p>
+                                <!-- <a href="#" class="card-btn">Learn More</a> -->
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                <div class="swiper-pagination card-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
             </div>
-            <div class="swiper-pagination modern-pagination"></div>
         </div>
     </div>
 
@@ -270,39 +311,82 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.0.0/swiper-bundle.min.js"></script>
     <script>
-        // Initialize modern Swiper with forced autoplay for continuous movement
-        var swiper = new Swiper('.modern-swiper', {
-            slidesPerView: 1,
-            effect: 'fade', // Modern fade effect
-            fadeEffect: {
-                crossFade: true
-            },
+        // Initialize card Swiper with perfect loop settings
+        var swiper = new Swiper('.card-swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 20,
             loop: true,
-            loopAdditionalSlides: 5,
+            loopFillGroupWithBlank: true,
+            loopAdditionalSlides: 10,
             autoplay: {
-                delay: 5000, // Longer delay for better viewing of each slide
+                delay: 3000,
                 disableOnInteraction: false,
             },
-            speed: 1500, // Smoother transitions
+            speed: 800,
             pagination: {
-                el: '.modern-pagination',
+                el: '.card-pagination',
                 clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            // Responsive breakpoints with auto sizing for perfect fit
+            breakpoints: {
+                320: {
+                    slidesPerView: 1.2,
+                    spaceBetween: 10,
+                },
+                576: {
+                    slidesPerView: 1.8,
+                    spaceBetween: 15,
+                },
+                768: {
+                    slidesPerView: 2.2,
+                    spaceBetween: 20,
+                },
+                992: {
+                    slidesPerView: 3.2,
+                    spaceBetween: 25,
+                }
             }
         });
 
-        // Force autoplay to start immediately
+        // Force autoplay to start immediately and ensure continuous loop
         document.addEventListener('DOMContentLoaded', function () {
             swiper.autoplay.start();
+
+            // Ensure autoplay continues even if user interacts
+            swiper.on('touchEnd', function () {
+                swiper.autoplay.start();
+            });
+
+            // Force perfect looping without gaps
+            swiper.on('beforeLoopFix', function () {
+                // Remove any potential empty spaces in the loop
+                swiper.updateSize();
+                swiper.updateSlides();
+            });
         });
 
         // Make sure autoplay continues even after page interactions
         window.addEventListener('load', function () {
             swiper.autoplay.start();
+            swiper.updateSize(); // Force size update to eliminate gaps
 
-            // Additional check to ensure autoplay starts
-            setTimeout(function () {
-                swiper.autoplay.start();
-            }, 1000);
+            // Additional periodic checks to ensure continuous movement
+            setInterval(function () {
+                if (!swiper.autoplay.running) {
+                    swiper.autoplay.start();
+                }
+                swiper.updateSize(); // Periodically update size to maintain perfect loop
+            }, 5000);
+        });
+
+        // Handle window resize to prevent gaps
+        window.addEventListener('resize', function () {
+            swiper.updateSize();
+            swiper.updateSlides();
         });
     </script>
 </body>
