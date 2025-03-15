@@ -15,7 +15,7 @@ body {
 }
 
 .bodyhome {
-    background-color: #005e5c;
+    background-color: #07482a;
     color: white;
     text-align: center;
 }
@@ -442,7 +442,7 @@ body {
     overflow: hidden;
     width: 280px;
     height: 150vh;
-    background-color: #005e5c;
+    background-color: #07482a;
     color: white;
     padding: 20px;
     display: flex;
@@ -707,7 +707,7 @@ th {
 h4 {
     font-weight: bold;
     font-size: 20px;
-    color: #005e5c;
+    color: #07482a;
     padding: 10px;
 
 }
@@ -721,7 +721,7 @@ h4 {
     border-radius: 5px;
     background: white;
     font-size: 14px;
-    color: #005e5c;
+    color: #07482a;
     width: 35px;
 }
 
@@ -948,7 +948,7 @@ h4 {
 }
 
 .badge3 {
-    background: #003B1AFF;
+    background: #07482a;
 
 }
 
