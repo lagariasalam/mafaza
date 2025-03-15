@@ -15,7 +15,7 @@ body {
 }
 
 .bodyhome {
-    background-color: #004d1a;
+    background-color: #005e5c;
     color: white;
     text-align: center;
 }
@@ -442,7 +442,7 @@ body {
     overflow: hidden;
     width: 280px;
     height: 150vh;
-    background-color: #003B1A;
+    background-color: #005e5c;
     color: white;
     padding: 20px;
     display: flex;
@@ -707,7 +707,7 @@ th {
 h4 {
     font-weight: bold;
     font-size: 20px;
-    color: #003b1a;
+    color: #005e5c;
     padding: 10px;
 
 }
@@ -721,7 +721,7 @@ h4 {
     border-radius: 5px;
     background: white;
     font-size: 14px;
-    color: #003b1a;
+    color: #005e5c;
     width: 35px;
 }
 
