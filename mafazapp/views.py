@@ -58,26 +58,33 @@ def login_view(request):
             return redirect('admindashboard')  # Redirect staff to admin dashboard
         else:
             return redirect('userdashboard')  # Redirect normal users to user dashboard
-        
+    
+    error = None
     if request.method == 'POST':
-        username_or_email = request.POST['username']
-        password = request.POST['password']
+        username_or_email = request.POST.get('username', '')
+        password = request.POST.get('password', '')
         
-        # Try to authenticate using username or email
-        user = None
-        if '@' in username_or_email:
+        # Try to authenticate using username directly
+        user = authenticate(request, username=username_or_email, password=password)
+        
+        # If not successful and input contains @, try to find by email
+        if user is None and '@' in username_or_email:
             try:
-                user = CustomUser.objects.get(email=username_or_email)
+                # Get the user by email
+                user_obj = CustomUser.objects.get(email=username_or_email)
+                # Authenticate with the username and password
+                user = authenticate(request, username=user_obj.username, password=password)
             except CustomUser.DoesNotExist:
                 user = None
-        else:
-            user = authenticate(request, username=username_or_email, password=password)
         
-        if user is not None and user.check_password(password):
-            if not user.is_approved and not (user.is_superuser or user.is_staff):
+        # If authentication succeeded
+        if user is not None:
+            # Check if regular user is approved (staff and superusers bypass this check)
+            if not user.is_approved and not user.is_staff and not user.is_superuser:
                 return render(request, 'pendingapproval.html', 
                     {'error': 'Your account is awaiting approval by an administrator.'})
             
+            # Complete login
             login(request, user)
             
             # Redirect based on user type
@@ -87,21 +94,26 @@ def login_view(request):
                 return redirect('admindashboard')  # Admin dashboard
             else:
                 return redirect('userdashboard')  # User dashboard
-            
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            error = 'Invalid credentials. Please try again.'
     
-    return render(request, 'login.html')
-
-# logout
+    return render(request, 'login.html', {'error': error})
 
 def logout_view(request):
+    # Perform logout
     logout(request)
+    
+    # Clear session data
     request.session.flush()
+    
+    # Redirect with cache-control headers
     response = redirect('home')
-    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    
+    # Add cache-control headers to prevent browser caching
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
+    
     return response
 
 def pendingapproval(request):
@@ -109,13 +121,20 @@ def pendingapproval(request):
 
 
 
+# Define permission check functions
 def user_required(user):
-    return user.is_authenticated and not user.is_staff
-user_login_required = user_passes_test(user_required, login_url='home')
-
+    return user.is_authenticated and not user.is_staff and not user.is_superuser
 
 def admin_required(user):
-    return user.is_authenticated and user.is_staff
+    return user.is_authenticated and user.is_staff 
+
+def superuser_required(user):
+    return user.is_authenticated and user.is_superuser
+
+# Create the decorators
+user_login_required = user_passes_test(user_required, login_url='login')
+admin_login_required = user_passes_test(admin_required, login_url='login')
+superuser_login_required = user_passes_test(superuser_required, login_url='login')
 
 
 
